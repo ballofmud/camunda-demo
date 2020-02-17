@@ -27,6 +27,11 @@ public class SpringBootConsoleApplication
 
     @Override
     public void run(String... args) {
+        runSync();
+        runAsync();
+    }
+
+    private void runSync(){
         try {
             LOG.info("EXECUTING : command line runner");
             String processInstanceId = runtimeService
@@ -39,4 +44,19 @@ public class SpringBootConsoleApplication
             LOG.warn("exception caught: {}", e.getMessage());
         }
     }
+
+    private void runAsync(){
+        try {
+            LOG.info("EXECUTING : command line runner");
+            String processInstanceId = runtimeService
+                    .startProcessInstanceByKey("basic-process-exception-async")
+                    .getProcessInstanceId();
+            LOG.info("started instance: {}", processInstanceId);
+            runtimeService.signalEventReceived("test_signal");
+        }
+        catch (RuntimeException e) {
+            LOG.warn("exception caught: {}", e.getMessage());
+        }
+    }
+
 }
